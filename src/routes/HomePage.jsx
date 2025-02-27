@@ -69,7 +69,7 @@ function HomePage() {
       <FeaturedPost />
       {/* <Post List /> */}
       <section>
-        <h1 className='my-8 text-2xl text-gray-800 '>Recen Posts</h1>
+        <h1 className='my-8 text-2xl text-gray-800 '>Recent Posts</h1>
         <PostList />
       </section>
     </section>
