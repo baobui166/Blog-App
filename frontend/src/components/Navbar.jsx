@@ -1,15 +1,11 @@
+import { SignedIn, SignedOut, UserButton } from "@clerk/clerk-react"
 import { useState } from "react"
-import Image from "./Image"
 import { Link } from "react-router-dom"
-import {
-  SignedIn,
-  SignedOut,
-  SignInButton,
-  UserButton
-} from "@clerk/clerk-react"
+import Image from "./Image"
 
 export default function Navbar() {
   const [open, setOpen] = useState(false)
+
   return (
     <div className='w-full h-16 md:h-20 flex items-center justify-between'>
       {/* LOGO */}

@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom"
-import MainCategory from "../components/MainCategory"
 import FeaturedPost from "../components/FeaturedPost"
+import MainCategory from "../components/MainCategory"
 import PostList from "../components/PostList"
 
 function HomePage() {

@@ -7,6 +7,7 @@ import commentRouter from "./routes/comment.routes.js"
 import postRouter from "./routes/post.routes.js"
 import userRouter from "./routes/user.routes.js"
 import cors from "cors"
+import refreshRouter from "./routes/refreshToken.routes.js"
 
 const app = express()
 app.use(express.json())
@@ -16,6 +17,16 @@ app.use("/users", userRouter)
 app.use("/auth", authRouter)
 app.use("/comments", commentRouter)
 app.use("/posts", postRouter)
+app.use("/refresh-token", refreshRouter)
+
+app.use(function (req, res, next) {
+  res.header("Acces-Control-Allow-Origin", "*")
+  res.header(
+    "Acces-Control-Allow-Origin",
+    "Origin, X-Requested-With, Content-Type, Accept"
+  )
+  next()
+})
 
 app.use((error, req, res, next) => {
   res.status(error.status || 500)

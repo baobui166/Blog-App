@@ -1,14 +1,33 @@
 import { useMutation } from "@tanstack/react-query"
 import axios from "axios"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import ReactQuill from "react-quill-new"
 import "react-quill-new/dist/quill.snow.css"
 import { useNavigate } from "react-router-dom"
 import { toast } from "react-toastify"
+import Upload from "../components/Upload"
+import { useUser } from "../context/contextUser"
 
 function WritePage() {
-  const [content, setContent] = useState("")
   const navigate = useNavigate()
+  const [value, setValue] = useState("")
+  const [cover, setCover] = useState("")
+  const [image, setImage] = useState("")
+  const [video, setVideo] = useState("")
+  const [progress, setProgress] = useState(0)
+  const { user } = useUser()
+
+  useEffect(() => {
+    image && setValue((prev) => prev + `<p><image src="${image.url}"/></p>`)
+  }, [image])
+
+  useEffect(() => {
+    video &&
+      setValue(
+        (prev) => prev + `<p><iframe class="ql-video" src="${video.url}"/></p>`
+      )
+  }, [video])
+
   const mutation = useMutation({
     mutationFn: async (newPost) => {
       //let token
@@ -29,15 +48,21 @@ function WritePage() {
     e.preventDefault()
     const formData = new FormData(e.target)
 
+    if (!user) {
+      toast.error("Please, Login!!!")
+    }
+
     const data = {
-      userId: "67c6f4be581925394b4fb395",
+      img: cover.filePath || "",
+      userId: user._id,
       title: formData.get("title"),
       category: formData.get("category"),
       desc: formData.get("desc"),
-      content: content
+      content: value
     }
 
     console.log(data)
+    console.log(user)
 
     mutation.mutate(data)
   }
@@ -49,9 +74,12 @@ function WritePage() {
         onSubmit={handleSubmit}
         className=' flex flex-col gap-6 flex-1 mb-6'
       >
-        <button className='w-max p-2 shadow-md rounded-md text-sm text-gray-500'>
-          Add a cover image
-        </button>
+        <Upload type='image' setProgress={setProgress} setData={setCover}>
+          <section className='w-max p-2 shadow-md rounded-md text-sm text-gray-500'>
+            Add a cover image
+          </section>
+        </Upload>
+
         <input
           className='text-4xl font-semibold bg-transparent outline-none'
           type='text'
@@ -78,18 +106,34 @@ function WritePage() {
           name='desc'
           placeholder='A Short Description'
         />
-        <ReactQuill
-          theme='snow'
-          value={content}
-          onChange={setContent}
-          className='flex-1 rounded-xl bg-white shadow-md'
-        />
+
+        <section className='flex flex-1'>
+          <div className='flex flex-col gap-2 mr-2 '>
+            <Upload type='image' setProgress={setProgress} setData={setImage}>
+              🖼️
+            </Upload>
+
+            <Upload type='video' setProgress={setProgress} setData={setVideo}>
+              ⏯️
+            </Upload>
+          </div>
+          <ReactQuill
+            theme='snow'
+            value={value}
+            onChange={setValue}
+            className='flex-1 rounded-xl bg-white shadow-md'
+            readOnly={0 < progress && progress < 100}
+          />
+        </section>
+
         <button
-          disabled={mutation.isPending}
+          type='submit'
+          disabled={mutation.isPending || (0 < progress && progress < 100)}
           className='bg-blue-800 text-white font-medium mt-4 p-2 w-36 rounded-md disabled:bg-blue-400 disabled:cursor-not-allowed'
         >
           {mutation.isPending ? "Loading..." : "Send"}
         </button>
+        {progress}
         {mutation.error && <span></span>}
       </form>
     </section>

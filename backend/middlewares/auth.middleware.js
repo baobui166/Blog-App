@@ -14,7 +14,8 @@ export const authorize = async (req, res, next) => {
     if (!token) return req.status(401).json({ message: "Unauthorized" })
     const decoded = jwt.verify(token, JWT_SECRET)
     const user = await userModels.findById(decoded.userId)
-    if (!user) return req.status(401).json({ message: "Unauthorized" })
+    if (!user)
+      return req.status(401).json({ message: "You are not authenticated!" })
 
     req.user = user
 

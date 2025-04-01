@@ -4,7 +4,6 @@ import axios from "axios"
 
 const fetchPosts = async () => {
   const res = await axios.get(`${import.meta.env.VITE_API_URL}/posts`)
-  console.log(res.data)
   return res.data
 }
 
